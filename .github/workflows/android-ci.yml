@@ -34,8 +34,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      #- name: Build with Gradle
-      #  run: ./gradlew build
+      - name: Build with Gradle
+        run: ./gradlew build
 
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest --tests "com.example.calculatetip.TipCalculatorTests"
+        run: ./gradlew testDebugUnitTest
