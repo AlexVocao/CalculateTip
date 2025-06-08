@@ -37,6 +37,15 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests.all {
+            it.testLogging {
+                events("passed", "skipped", "failed")
+                showStandardStreams = true
+            }
+        }
+    }
 }
 
 dependencies {
