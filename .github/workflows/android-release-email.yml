@@ -42,9 +42,12 @@ jobs:
             app/build/outputs/apk/release/app-release-unsigned.apk \
             ${{ secrets.KEY_ALIAS }}
 
+      - name: Install build-tools 34.0.0
+        run: sdkmanager "build-tools;34.0.0"
+
       - name: Align APK
         run: |
-            @ANDROID_HOME@/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -n 1)/zipalign -v 4 \
+            @ANDROID_HOME@/build-tools/34.0.0/zipalign -v 4 \
             app/build/outputs/apk/release/app-release-unsigned.apk \
             app/build/outputs/apk/release/app-release.apk
 
