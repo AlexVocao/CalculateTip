@@ -57,4 +57,4 @@ jobs:
             https://github.com/AlexVocao/CalculateTip/actions/runs/${{ github.run_id }}
           to: caohoavo22@gmail.com
           from: ${{ secrets.MAIL_USERNAME }}
-          attachments: app/build/outputs/apk/release/app-release.apk
+          #attachments: app/build/outputs/apk/release/app-release.apk
