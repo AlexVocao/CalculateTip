@@ -43,4 +43,5 @@ jobs:
           body: "APK mới đã được build thành công. File đính kèm bên dưới."
           to: caohoavo22@gmail.com
           from: ${{ secrets.MAIL_USERNAME }}
-          attachments: app/build/outputs/apk/release/app-release.apk
+          #attachments: app/build/outputs/apk/release/app-release.apk
+          attachments: app/build/outputs/apk/release/app-release-unsigned.apk
