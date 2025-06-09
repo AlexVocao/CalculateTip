@@ -1,4 +1,4 @@
-name: Android Release Build & Email
+name: Android Release Build & Email (Manual)
 
 on:
   workflow_dispatch:
@@ -40,7 +40,7 @@ jobs:
             -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
             -keypass ${{ secrets.KEY_PASSWORD }} \
             app/build/outputs/apk/release/app-release-unsigned.apk \
-            ${ secrets.KEY_ALIAS }
+            ${{ secrets.KEY_ALIAS }}
 
       - name: Align APK
         run: |
