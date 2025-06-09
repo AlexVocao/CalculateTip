@@ -23,14 +23,14 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
+      - name: Check if APK exists
+        run: ls -lh app/build/outputs/apk/release/
+
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: app/build/outputs/apk/release/app-release.apk
-
-      - name: Check if APK exists
-        run: ls -lh app/build/outputs/apk/release/
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
 
       - name: Send APK to tester via email
         uses: dawidd6/action-send-mail@v3
@@ -39,9 +39,9 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "[CI] Android Release APK"
-          body: "APK mới đã được build thành công. File đính kèm bên dưới."
+          subject: "[CI] Android Release Unsigned APK"
+          body: "APK mới đã được build thành công."
           to: caohoavo22@gmail.com
           from: ${{ secrets.MAIL_USERNAME }}
           #attachments: app/build/outputs/apk/release/app-release.apk
-          attachments: app/build/outputs/apk/release/app-release-unsigned.apk
+          #attachments: app/build/outputs/apk/release/app-release-unsigned.apk
