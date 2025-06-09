@@ -40,7 +40,10 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: "[CI] Android Release Unsigned APK"
-          body: "APK mới đã được build thành công."
+          body: |
+            APK mới đã được build thành công.
+            Tải file APK tại tab Artifacts trong workflow run:
+            https://github.com/AlexVocao/CalculateTip/actions/runs/${{ github.run_id }}
           to: caohoavo22@gmail.com
           from: ${{ secrets.MAIL_USERNAME }}
           #attachments: app/build/outputs/apk/release/app-release.apk
