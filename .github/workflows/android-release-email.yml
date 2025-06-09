@@ -29,6 +29,9 @@ jobs:
           name: app-release-apk
           path: app/build/outputs/apk/release/app-release.apk
 
+      - name: Check if APK exists
+        run: ls -lh app/build/outputs/apk/release/
+
       - name: Send APK to tester via email
         uses: dawidd6/action-send-mail@v3
         with:
