@@ -1,4 +1,4 @@
-name: Android Debug Build & Email
+name: Android Debug Build & Email (Manual)
 
 on:
   workflow_dispatch:
