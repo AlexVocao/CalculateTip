@@ -23,6 +23,31 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
+      - name: Decode keystore from base64
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+              echo "Decoding keystore..."
+              echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
+              echo "Keystore decoded successfully."
+          else
+              echo "No keystore found. Skipping decoding step."
+          fi
+
+      - name: Sign APK
+        run: |
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
+            -keystore keystore.jks \
+            -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
+            -keypass ${{ secrets.KEY_PASSWORD }} \
+            app/build/outputs/apk/release/app-release-unsigned.apk \
+            ${ secrets.KEY_ALIAS }
+
+      - name: Align APK
+        run: |
+            @ANDROID_HOME@/build-tools/$(ls $ANDROID_HOME/build-tools | sort -V | tail -n 1)/zipalign -v 4 \
+            app/build/outputs/apk/release/app-release-unsigned.apk \
+            app/build/outputs/apk/release/app-release.apk
+
       - name: Check if APK exists
         run: ls -lh app/build/outputs/apk/release/
 
@@ -39,12 +64,11 @@ jobs:
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: "[CI] Android Release Unsigned APK"
+          subject: "[CI] Android Release APK"
           body: |
             APK mới đã được build thành công.
             Tải file APK tại tab Artifacts trong workflow run:
             https://github.com/AlexVocao/CalculateTip/actions/runs/${{ github.run_id }}
           to: caohoavo22@gmail.com
           from: ${{ secrets.MAIL_USERNAME }}
-          #attachments: app/build/outputs/apk/release/app-release.apk
-          #attachments: app/build/outputs/apk/release/app-release-unsigned.apk
+          attachments: app/build/outputs/apk/release/app-release.apk
