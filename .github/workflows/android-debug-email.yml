@@ -33,7 +33,10 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Zip APK
-        run: zip -j app-debug-apk.zip app/build/outputs/apk/debug/app-debug.apk
+        run: zip -j app/build/outputs/apk/debug/app-debug-apk.zip app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Check if app-debug-apk.zip exists
+        run: ls -lh app/build/outputs/apk/debug/
 
       - name: Send APK to tester via email
         uses: dawidd6/action-send-mail@v3
