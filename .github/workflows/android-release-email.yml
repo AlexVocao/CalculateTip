@@ -20,36 +20,19 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Build Release APK
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
+
+      - name: Build Signed APK
+        env:
+          KEYSTORE_PATH: keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleRelease
-
-      - name: Decode keystore from base64
-        run: |
-          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
-              echo "Decoding keystore..."
-              echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
-              echo "Keystore decoded successfully."
-          else
-              echo "No keystore found. Skipping decoding step."
-          fi
-
-      - name: Sign APK
-        run: |
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 \
-            -keystore keystore.jks \
-            -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
-            -keypass ${{ secrets.KEY_PASSWORD }} \
-            app/build/outputs/apk/release/app-release-unsigned.apk \
-            ${{ secrets.KEY_ALIAS }}
-
-      - name: Install build-tools 34.0.0
-        run: sdkmanager "build-tools;34.0.0"
-
-      - name: Align APK
-        run: |
-            @ANDROID_HOME@/build-tools/34.0.0/zipalign -v 4 \
-            app/build/outputs/apk/release/app-release-unsigned.apk \
-            app/build/outputs/apk/release/app-release.apk
 
       - name: Check if APK exists
         run: ls -lh app/build/outputs/apk/release/
@@ -58,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          path: app/build/outputs/apk/release/app-release.apk
 
       - name: Send APK to tester via email
         uses: dawidd6/action-send-mail@v3

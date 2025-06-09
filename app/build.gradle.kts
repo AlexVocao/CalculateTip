@@ -1,7 +1,16 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
 }
 
 android {
@@ -18,13 +27,39 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            val storeFilePath = System.getenv("KEYSTORE_PATH")
+                ?: localProperties.getProperty("release.keystore.path")
+            val storePass = System.getenv("KEYSTORE_PASSWORD")
+                ?: localProperties.getProperty("release.keystore.password")
+            val alias =
+                System.getenv("KEY_ALIAS") ?: localProperties.getProperty("release.key.alias")
+            val keyPass =
+                System.getenv("KEY_PASSWORD") ?: localProperties.getProperty("release.key.password")
+
+            if (storeFilePath != null && storePass != null && alias != null && keyPass != null) {
+                storeFile = rootProject.file(storeFilePath)
+                storePassword = storePass
+                keyAlias = alias
+                keyPassword = keyPass
+            } else {
+                throw GradleException("Release signing configuration is not properly set up. Please check local.properties or environment variables.")
+            }
+        }
+    }
+
     buildTypes {
-        release {
+        getByName("debug") {
             isMinifyEnabled = false
+        }
+        getByName("release") {
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -50,6 +85,7 @@ android {
     lint {
         disable.add("NullSafeMutableLiveData")
     }
+
 }
 
 dependencies {
