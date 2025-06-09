@@ -32,11 +32,11 @@ jobs:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Zip APK
-        run: zip -j app/build/outputs/apk/debug/app-debug-apk.zip app/build/outputs/apk/debug/app-debug.apk
+#      - name: Zip APK
+#        run: zip -j app/build/outputs/apk/debug/app-debug-apk.zip app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Check if app-debug-apk.zip exists
-        run: ls -lh app/build/outputs/apk/debug/
+#      - name: Check if app-debug-apk.zip exists
+#        run: ls -lh app/build/outputs/apk/debug/
 
       - name: Send APK to tester via email
         uses: dawidd6/action-send-mail@v3
@@ -52,4 +52,5 @@ jobs:
             https://github.com/AlexVocao/CalculateTip/actions/runs/${{ github.run_id }}
           to: caohoavo22@gmail.com
           from: ${{ secrets.MAIL_USERNAME }}
-          attachments: app/build/outputs/apk/debug/app-debug-apk.zip
+          #attachments: app/build/outputs/apk/debug/app-debug-apk.zip
+          # because gmail not allow attachments with .apk extension, even if it's zipped
